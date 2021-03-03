@@ -12,9 +12,10 @@
 
 <body>
     <div id="app">
-        <p>{{counter}}</p>
+        <p @click="handleAdd">{{counter}}</p>
         <p k-text="counter"></p>
         <p k-html="desc"></p>
+        <input type="number" k-model="counter" />
     </div>
 </body>
 <script>
@@ -23,11 +24,13 @@
         data: {
             counter: 1,
             desc: '<span style="color: red">milk~</span>'
-        }
+        },
+        methods: {
+            handleAdd() {
+                this.counter++
+            }
+        },
     })
-    setInterval(() => {
-        app.counter++
-    }, 1000);
 </script>
 
 </html>

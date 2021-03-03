@@ -135,11 +135,36 @@ class Compile {
                 const dir = name.substring(2);
                 this[dir] && this[dir](node, value);
             }
+            if (this.isEvent(name)) {
+                this.handleEvent(node, RegExp.$1, value);
+            }
         })
+    }
+
+    handleEvent(node, exp, value) {
+        const fn = this.$vm.$options.methods[value] && this.$vm.$options.methods[value];
+        node.addEventListener(exp, fn.bind(this.$vm));
+    }
+
+    isEvent(attr) {
+        return /^@(.*)/.test(attr) || /^k-on:(.*)/.test(attr);
     }
 
     isDir(attr) {
         return attr.startsWith('k-');
+    }
+
+    // k-model
+    model(node, exp) {
+        this.upDate(node, exp, 'model');
+        
+        node.addEventListener('input', e => {
+            this.$vm[exp] = e.target.value;
+        })
+    }
+
+    modelUpDater(node, val) {
+        node.value = val;
     }
 
     // k-text
