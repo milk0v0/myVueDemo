@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="./kVue2-vdom.js"></script>
+</head>
+
+<body>
+    <div id="app">{{counter}}</div>
+</body>
+<script>
+    const app = new kVue({
+        el: '#app',
+        data: {
+            counter: 1,
+        },
+        render(h) {
+            // vdom
+            // return h('div', { id: 'app' }, this.counter + '')
+            return h('div', { id: 'app' }, [
+                h('p', null, this.counter + ''),
+                h('p', null, this.counter + ''),
+                h('p', null, this.counter + '')
+            ])
+        }
+    })
+    setInterval(() => {
+        app.counter++
+    }, 1000);
+</script>
+
+</html>
