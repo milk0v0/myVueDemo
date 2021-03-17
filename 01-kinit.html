@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    const createAppAPI = render => {
+        return function (rootComponent) {
+            // 1. 创建 app
+            const app = {
+                mount(container) {
+                    // 1. 获取跟组件 vnode
+                    const vnode = {
+                        type: rootComponent
+                    }
+
+                    // 2. render 他
+                    render(vnode, container)
+                }
+            }
+
+            return app
+        }
+    }
+
+    const createRenderer = ({ createElement, querySelector, insert }) => {
+        const render = (vnode, container) => {
+            // 获取跟组件 subtree
+            const rootComponent = vnode.type;
+            const subtree = rootComponent.render.call(rootComponent.data());
+            // 直接 dom 操作
+            // 创建 dom 节点
+            const child = createElement(subtree.type);
+            if (typeof subtree.children === 'string') {
+                child.textContent = subtree.children
+            } else {
+                // 递归
+            }
+
+            const parent = querySelector(container);
+
+            insert(child, parent);
+        }
+        return {
+            render,
+            createApp: createAppAPI(render)
+        }
+    }
+
+    // 获取 renderer
+    // 通过传入个平台独立节点和属性操作可实现跨平台
+    const renderer = createRenderer({
+        createElement(tag) {
+            return document.createElement(tag)
+        },
+        querySelector(sel) {
+            return document.querySelector(sel)
+        },
+        insert(child, parent) {
+            parent.appendChild(child)
+        }
+    });
+
+    const Vue = {
+        createApp(rootComp) {
+            return renderer.createApp(rootComp)
+        }
+    }
+
+    Vue.createApp({
+        data() {
+            return {
+                foo: 'hello vue3'
+            }
+        },
+        render() {
+            return {
+                type: 'h2',
+                children: this.foo
+            }
+        }
+    }).mount('#app');
+</script>
+
+</html>
